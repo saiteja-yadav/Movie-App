@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .movie-info {
+            margin-top: 20px;
+        }
+
+        .movie-info img {
+            max-width: 200px;
+            border-radius: 8px;
+        }
+
+        .movie-info h2 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .movie-info p {
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Movie App</h1>
+        <input type="text" id="search" placeholder="Search for movies...">
+        <button id="searchBtn">Search</button>
+        <div id="movieInfo" class="movie-info"></div>
+    </div>
+
+    <script>
+        document.getElementById('searchBtn').addEventListener('click', function() {
+            const query = document.getElementById('search').value;
+            if (query) {
+                fetchMovieData(query);
+            }
+        });
+
+        function fetchMovieData(query) {
+            const apiKey = 'YOUR_OMDB_API_KEY'; // Replace with your OMDb API key
+            const url = `https://www.omdbapi.com/?t=${encodeURIComponent(query)}&apikey=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    displayMovieData(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching movie data:', error);
+                    document.getElementById('movieInfo').innerHTML = 'Error fetching movie data.';
+                });
+        }
+
+        function displayMovieData(data) {
+            const movieInfo = document.getElementById('movieInfo');
+            if (data.Response === 'True') {
+                movieInfo.innerHTML = `
+                    <img src="${data.Poster}" alt="${data.Title}">
+                    <h2>${data.Title} (${data.Year})</h2>
+                    <p><strong>Genre:</strong> ${data.Genre}</p>
+                    <p><strong>Director:</strong> ${data.Director}</p>
+                    <p><strong>Actors:</strong> ${data.Actors}</p>
+                    <p><strong>Plot:</strong> ${data.Plot}</p>
+                `;
+            } else {
+                movieInfo.innerHTML = 'Movie not found.';
+            }
+        }
+    </script>
+</body>
+</html>
